@@ -2,6 +2,14 @@
 
 # Gemini Balance - Gemini API Proxy and Load Balancer
 
+> **Fork deploy notes (vi-ban-dich branch).** Scope of the translation: runnable
+> code and UI only (Python/HTML/JS/JSON strings, Dockerfile comments, `.env.example`
+> comments). `README_ZH.md`, `LICENSE`, `.github/workflows`, `.vscode` are untouched.
+> Timezone on the running deployment (.62): `TIMEZONE=Asia/Ho_Chi_Minh` (VN) passed
+> via environment; the Dockerfile default `TZ` stays as upstream (`Asia/Shanghai`).
+> Dependencies are pinned in `requirements-locked.txt` (pip freeze of the original
+> image built 2025-09-23) for reproducible builds.
+
 <p align="center">
   <a href="https://trendshift.io/repositories/13692" target="_blank">
     <img src="https://trendshift.io/api/badge/repositories/13692" alt="snailyp%2Fgemini-balance | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/>

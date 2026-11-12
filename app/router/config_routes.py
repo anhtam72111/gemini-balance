@@ -1,5 +1,5 @@
 """
-配置路由模块
+Config routes module
 """
 
 from typing import Any, Dict, List
@@ -36,7 +36,7 @@ async def update_config(config_data: Dict[str, Any], request: Request):
         return RedirectResponse(url="/", status_code=302)
     try:
         result = await ConfigService.update_config(config_data)
-        # 配置更新成功后，立即更新所有 logger 的级别
+        # Immediately update all logger levels after configuration update is successful
         Logger.update_log_levels(config_data["LOG_LEVEL"])
         logger.info("Log levels updated after configuration change.")
         return result

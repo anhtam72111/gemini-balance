@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}API密钥状态 - Gemini Balance{%
+{% extends "base.html" %} {% block title %}API Key Status - Gemini Balance{%
 endblock %} {% block head_extra_styles %}
 <style>
   /* keys_status.html specific styles */
@@ -22,7 +22,7 @@ endblock %} {% block head_extra_styles %}
   }
   /* Copy status styling is handled by base.html's notification */
 
-  /* 现代数据统计样式 */
+  /* Modern data statistics style */
   .stats-dashboard {
     display: grid;
     grid-template-columns: 1fr;
@@ -38,11 +38,11 @@ endblock %} {% block head_extra_styles %}
     }
   }
 
-  /* 让图表卡片在网格中占满整行 */
+  /* Make chart cards occupy full row in the grid */
   .stats-card.chart-wide {
     grid-column: 1 / -1;
   }
-  /* 图表容器固定高度，配合 Chart.js maintainAspectRatio:false */
+  /* Fixed chart container height, with Chart.js maintainAspectRatio:false */
   .chart-container {
     height: 300px;
   }
@@ -50,7 +50,7 @@ endblock %} {% block head_extra_styles %}
     .chart-container { height: 220px; }
   }
 
-  /* 统计卡片样式 */
+  /* Statistics card style */
   .stats-card {
     background-color: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(8px);
@@ -105,7 +105,7 @@ endblock %} {% block head_extra_styles %}
     padding: 0.75rem;
   }
 
-  /* 统计项样式 */
+  /* Statistics item style */
   .stat-item {
     padding: 0.75rem;
     border-radius: 0.5rem;
@@ -173,7 +173,7 @@ endblock %} {% block head_extra_styles %}
     transform: scale(1.1) rotate(0deg);
   }
 
-  /* 统计类型样式 */
+  /* Statistics type style */
   .stat-primary {
     color: #3b82f6; /* blue-500 */
     background-color: rgba(59, 130, 246, 0.1);
@@ -195,7 +195,7 @@ endblock %} {% block head_extra_styles %}
     background-color: rgba(6, 182, 212, 0.1);
   }
 
-  /* 新增：调整API调用统计项的悬停背景色，使其更亮更融合主题 */
+  /* New: Adjust hover background color for API call statistics items to be brighter and more integrated with theme */
   .stat-item.stat-warning:hover {
     background-color: rgba(
       245,
@@ -221,7 +221,7 @@ endblock %} {% block head_extra_styles %}
     ) !important; /* blue-500 with higher opacity */
   }
 
-  /* 响应式调整 */
+  /* Responsive adjustment */
   @media (max-width: 640px) {
     .stats-dashboard {
       gap: 1rem;
@@ -293,7 +293,7 @@ endblock %} {% block head_extra_styles %}
     }
   }
 
-  /* 修改密钥列表背景和卡片样式 */
+  /* Modify key list background and card style */
   .key-content {
     background-color: rgba(249, 250, 251, 0.8) !important;
   }
@@ -305,7 +305,7 @@ endblock %} {% block head_extra_styles %}
     transition: all 0.3s ease;
     cursor: pointer;
     position: relative;
-    padding-left: 2.5rem; /* 为自定义复选框留出空间 */
+    padding-left: 2.5rem; /* Reserve space for custom checkboxes */
   }
 
   #validKeys li:hover,
@@ -322,13 +322,13 @@ endblock %} {% block head_extra_styles %}
     border-color: rgba(59, 130, 246, 0.3);
   }
 
-  /* 隐藏原生复选框（仅隐藏有效/无效列表中的复选框，保留值得注意的Key列表中的复选框可见） */
+  /* Hide native checkboxes (only for valid/invalid lists, keep visible in notable keys list) */
   #validKeys .key-checkbox,
   #invalidKeys .key-checkbox {
     display: none;
   }
 
-  /* 自定义复选框样式（仅针对有效/无效列表） */
+  /* Custom checkbox style (only for valid/invalid lists) */
   #validKeys li::before,
   #invalidKeys li::before {
     content: "";
@@ -350,21 +350,21 @@ endblock %} {% block head_extra_styles %}
     border-color: #2563eb; /* blue-600 */
   }
 
-  /* 自定义复选框对勾样式 */
+  /* Custom checkbox checkmark style */
   #validKeys li.selected::after,
   #invalidKeys li.selected::after {
     content: "\f00c"; /* Font Awesome check icon */
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
     position: absolute;
-    left: calc(0.75rem + 0.3rem); /* 调整对勾位置 */
+    left: calc(0.75rem + 0.3rem); /* Adjust checkmark position */
     top: 50%;
     transform: translateY(-50%) scale(0.9);
     color: white;
     font-size: 0.8rem;
   }
 
-  /* 值得注意的Key列表样式与选中态（保留原生复选框可见） */
+  /* Notable Key list style and selected state (keep native checkbox visible) */
   #attentionKeysList li {
     display: flex;
     align-items: center;
@@ -395,7 +395,7 @@ endblock %} {% block head_extra_styles %}
     font-weight: 500;
   }
 
-  /* 模态框背景色调整 - comprehensive modal styling */
+  /* Modal background color adjustment - comprehensive modal styling */
   #apiCallDetailsModal .bg-white,
   #keyUsageDetailsModal .bg-white,
   #resultModal .bg-white,
@@ -408,7 +408,7 @@ endblock %} {% block head_extra_styles %}
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
   }
 
-  /* 模态框标题颜色 */
+  /* Modal title color */
   #apiCallDetailsModalTitle,
   #keyUsageDetailsModalTitle,
   #resultModalTitle,
@@ -419,13 +419,13 @@ endblock %} {% block head_extra_styles %}
     font-weight: 600;
   }
 
-  /* 密钥使用详情模态框头部特定样式 */
+  /* Key usage details modal header specific style */
   #keyUsageDetailsModal .bg-white > div.border-b {
-    /* 针对头部区域的下边框 */
+    /* Target bottom border of the header area */
     border-bottom-color: rgba(0, 0, 0, 0.12) !important;
   }
 
-  /* 模态框消息文本颜色 */
+  /* Modal message text color */
   #apiCallDetailsContent,
   #keyUsageDetailsContent,
   #resultModalMessage,
@@ -434,80 +434,80 @@ endblock %} {% block head_extra_styles %}
     color: #374151 !important; /* gray-700 */
   }
 
-  /* 特定调整操作结果模态框的消息区域样式 */
+  /* Specifically adjust message area style of action result modal */
   #resultModalMessage {
-    background-color: rgba(255, 255, 255, 0.95) !important; /* 浅色背景 */
-    border-color: rgba(0, 0, 0, 0.08) !important; /* 浅色边框 */
-    color: #374151 !important; /* 深色文本 */
+    background-color: rgba(255, 255, 255, 0.95) !important; /* Light background */
+    border-color: rgba(0, 0, 0, 0.08) !important; /* Light border */
+    color: #374151 !important; /* Dark text */
   }
 
-  /* 批量验证结果中普通信息列表 (如成功密钥列表) 的浅色主题样式 */
+  /* Light theme style for normal info lists (e.g. successful keys list) in bulk verification results */
   #resultModalMessage ul[class*="bg-gray-50"] {
-    /* 针对特定灰色背景色的ul */
-    background-color: rgba(249, 250, 251, 0.95) !important; /* 浅灰色背景 */
-    border-color: rgba(0, 0, 0, 0.08) !important; /* 浅色边框 */
+    /* Target ul with specific gray background color */
+    background-color: rgba(249, 250, 251, 0.95) !important; /* Light gray background */
+    border-color: rgba(0, 0, 0, 0.08) !important; /* Light border */
   }
 
   #resultModalMessage ul[class*="bg-gray-50"] li {
-    color: #374151 !important; /* 深色文本 */
+    color: #374151 !important; /* Dark text */
   }
 
-  /* 批量验证结果中失败列表的浅色主题样式 */
+  /* Light theme style for failure lists in bulk verification results */
   #resultModalMessage ul[class*="bg-red-50"] {
-    /* 针对特定背景色的ul */
-    background-color: rgba(254, 242, 242, 0.95) !important; /* 浅红色背景 */
-    border-color: rgba(239, 68, 68, 0.2) !important; /* 浅红色边框 */
+    /* Target ul with specific background color */
+    background-color: rgba(254, 242, 242, 0.95) !important; /* Light red background */
+    border-color: rgba(239, 68, 68, 0.2) !important; /* Light red border */
   }
 
-  /* 失败列表中的密钥文本 (如 AIza...lJ6E) */
+  /* Key text in failure lists (e.g. AIza...lJ6E) */
   #resultModalMessage ul[class*="bg-red-50"] li span.font-mono {
-    color: #dc2626 !important; /* 深红色文本 */
+    color: #dc2626 !important; /* Dark red text */
   }
 
-  /* 失败列表中的 "收起/展开" 按钮 - 协调的红色主题设计 */
+  /* "Collapse/Expand" button in failure list - coordinated red theme design */
   #resultModalMessage ul[class*="bg-red-50"] li button[class*="bg-red-200"] {
-    background-color: #dc2626 !important; /* 深红色按钮背景，与外框协调 */
-    color: #ffffff !important; /* 白色按钮文本 */
-    border: 1px solid #b91c1c !important; /* 更深的红色边框 */
+    background-color: #dc2626 !important; /* Dark red button background, coordinated with outer frame */
+    color: #ffffff !important; /* White button text */
+    border: 1px solid #b91c1c !important; /* Deeper red border */
     box-shadow: none !important;
-    font-weight: 500 !important; /* 增强文字粗细以提高可读性 */
+    font-weight: 500 !important; /* Increase font weight for better readability */
   }
   #resultModalMessage
     ul[class*="bg-red-50"]
     li
     button[class*="bg-red-200"]:hover {
-    background-color: #b91c1c !important; /* 悬停时更深的红色背景 */
-    color: #ffffff !important; /* 悬停时白色按钮文本 */
-    transform: translateY(-1px) !important; /* 轻微上移效果 */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important; /* 悬停阴影效果 */
+    background-color: #b91c1c !important; /* Deeper red background on hover */
+    color: #ffffff !important; /* White button text on hover */
+    transform: translateY(-1px) !important; /* Slight upward shift effect */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important; /* Hover shadow effect */
   }
 
-  /* 失败列表中的错误详情框 - 与红色主题协调的样式 */
+  /* Error details box in failure list - style coordinated with red theme */
   #resultModalMessage ul[class*="bg-red-50"] li div[id^="error-details-"] {
-    background-color: rgba(254, 242, 242, 0.8) !important; /* 更浅的红色背景，与外框协调 */
-    border-color: rgba(248, 113, 113, 0.3) !important; /* 浅红色边框 */
-    color: #7f1d1d !important; /* 深红色文本，确保良好对比度 */
-    font-weight: 500 !important; /* 增强文字粗细以提高可读性 */
-    line-height: 1.5 !important; /* 改善行高以提高可读性 */
+    background-color: rgba(254, 242, 242, 0.8) !important; /* Lighter red background, coordinated with outer frame */
+    border-color: rgba(248, 113, 113, 0.3) !important; /* Light red border */
+    color: #7f1d1d !important; /* Dark red text, ensure good contrast */
+    font-weight: 500 !important; /* Increase font weight for better readability */
+    line-height: 1.5 !important; /* Improve line height for better readability */
   }
 
-  /* 密钥使用详情模态框内表格表头样式 */
+  /* Table header style in key usage details modal */
   #keyUsageDetailsModal #keyUsageDetailsContent table th {
-    background-color: rgba(243, 244, 246, 0.95) !important; /* 浅灰色背景 */
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important; /* 浅色边框 */
-    color: #374151 !important; /* 深色文字 */
-    text-shadow: none; /* 移除文本阴影 */
+    background-color: rgba(243, 244, 246, 0.95) !important; /* Light gray background */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important; /* Light border */
+    color: #374151 !important; /* Dark text */
+    text-shadow: none; /* Remove text shadow */
   }
 
-  /* 密钥使用详情模态框表格单元格样式已移除，使用默认颜色与API调用详情保持一致 */
+  /* Table cell styles for key usage details modal removed, using default colors consistent with API call details */
 
-  /* 按钮文本颜色 */
+  /* Button text color */
   .stats-card button {
     color: #ffffff;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   }
 
-  /* 表单控件背景 */
+  /* Form control background */
   .form-input,
   .form-select {
     background-color: rgba(255, 255, 255, 0.95) !important;
@@ -515,7 +515,7 @@ endblock %} {% block head_extra_styles %}
     border-color: rgba(0, 0, 0, 0.12) !important;
   }
 
-  /* 标签文字颜色 */
+  /* Label text color */
   .text-gray-500,
   .text-gray-600,
   .text-gray-700 {
@@ -523,7 +523,7 @@ endblock %} {% block head_extra_styles %}
     text-shadow: none;
   }
 
-  /* 调整全局背景色，使之与白色背景更加协调 */
+  /* Adjust global background color to coordinate better with white background */
   .glass-card {
     background-color: rgba(255, 255, 255, 0.95) !important;
     backdrop-filter: blur(10px);
@@ -532,7 +532,7 @@ endblock %} {% block head_extra_styles %}
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
-  /* 分页控件样式增强 */
+  /* Pagination control style enhancement */
   .pagination-button {
     background-color: rgba(255, 255, 255, 0.9);
     color: #374151; /* gray-700 */
@@ -546,12 +546,12 @@ endblock %} {% block head_extra_styles %}
     border-color: #2563eb; /* blue-600 */
   }
 
-  /* 状态标签增强 */
+  /* Status label enhancement */
   .inline-flex.items-center.px-2\.5.py-0\.5.rounded-full {
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   }
 
-  /* 按钮颜色增强 */
+  /* Button color enhancement */
   button.bg-success-600,
   button.bg-blue-600,
   button.bg-slate-500,
@@ -561,46 +561,46 @@ endblock %} {% block head_extra_styles %}
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   }
 
-  /* 复选框文本样式 */
+  /* Checkbox text style */
   input[type="checkbox"] + label {
     color: #f1f5f9 !important;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
   }
 
-  /* 底部版权栏文本颜色修正 */
+  /* Footer copyright text color correction */
   .fixed.bottom-0.left-0.w-full.py-3.bg-white .text-gray-200,
   .fixed.bottom-0.left-0.w-full.py-3.bg-white .text-gray-300,
   .fixed.bottom-0.left-0.w-full.py-3.bg-white .text-gray-400,
   .fixed.bottom-0.left-0.w-full.py-3.bg-white .text-gray-500,
   .fixed.bottom-0.left-0.w-full.py-3.bg-white .text-gray-600,
   .fixed.bottom-0.left-0.w-full.py-3.bg-white .text-gray-700 {
-    color: #1f2937 !important; /* 使用更深的灰色提高对比度 */
+    color: #1f2937 !important; /* Use deeper gray to improve contrast */
     text-shadow: none !important;
   }
 
-  /* 导航链接悬停样式 - 优化以避免遮挡内容 */
+  /* Navigation link hover style - optimized to avoid blocking content */
   .nav-link {
     transition: all 0.2s ease-in-out;
     position: relative;
-    z-index: 1; /* 确保不会遮挡重要内容 */
+    z-index: 1; /* Ensure important content is not blocked */
   }
 
   .nav-link:hover {
     background-color: rgba(59, 130, 246, 0.1) !important; /* blue-500 light */
-    transform: scale(1.02); /* 使用缩放代替向上移动 */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* 增强阴影效果 */
+    transform: scale(1.02); /* Use scaling instead of upward translation */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Enhanced shadow effect */
   }
 
-  /* 导航按钮容器样式 - 为悬停效果预留空间 */
+  /* Navigation button container style - reserve space for hover effects */
   .nav-buttons-container {
-    padding-top: 0.5rem; /* 为悬停效果预留上方空间 */
-    padding-bottom: 0.75rem; /* 为悬停效果预留下方空间 */
+    padding-top: 0.5rem; /* Reserve top space for hover effects */
+    padding-bottom: 0.75rem; /* Reserve bottom space for hover effects */
   }
 
-  /* 主导航按钮的优化悬停效果 */
+  /* Optimized hover effect for main navigation buttons */
   .main-nav-btn:hover {
-    transform: scale(1.02) !important; /* 使用缩放代替向上移动 */
-    box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3) !important; /* 蓝色阴影 */
+    transform: scale(1.02) !important; /* Use scaling instead of upward translation */
+    box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3) !important; /* Blue shadow */
   }
 
   /* Active navigation tab */
@@ -669,8 +669,8 @@ endblock %} {% block head_extra_styles %}
     border-color: #3b82f6 !important;
   }
 
-  /* 新增：密钥列表内按钮背景和悬停颜色调整 */
-  /* 验证按钮 (绿色) */
+  /* New: Button background and hover color adjustment in key list */
+  /* Verify button (green) */
   #validKeys li button.bg-success-600,
   #invalidKeys li button.bg-success-600 {
     background-color: rgba(22, 163, 74, 0.65) !important;
@@ -682,35 +682,35 @@ endblock %} {% block head_extra_styles %}
     border-color: rgba(21, 128, 61, 0.95);
   }
 
-  /* 重置按钮 (加深灰色底，白色文字) */
+  /* Reset button (dark gray background, white text) */
   #validKeys li button.bg-gray-500,
   #invalidKeys li button.bg-gray-500 {
-    background-color: #6b7280 !important; /* gray-500 - 加深的灰色底 */
+    background-color: #6b7280 !important; /* gray-500 - darkened gray background */
     border: 1px solid #4b5563 !important; /* gray-600 */
-    color: #ffffff !important; /* white - 白色文字 */
+    color: #ffffff !important; /* white - white text */
   }
   #validKeys li button.bg-gray-500:hover,
   #invalidKeys li button.bg-gray-500:hover {
-    background-color: #4b5563 !important; /* gray-600 - 更深的灰色 */
+    background-color: #4b5563 !important; /* gray-600 - deeper gray */
     border-color: #374151 !important; /* gray-700 */
-    color: #ffffff !important; /* white - 白色文字 */
+    color: #ffffff !important; /* white - white text */
   }
 
-  /* 复制按钮 (蓝色底色，白色文字) */
+  /* Copy button (blue background, white text) */
   #validKeys li button.bg-blue-500,
   #invalidKeys li button.bg-blue-500 {
-    background-color: #3b82f6 !important; /* blue-500 - 蓝色底 */
+    background-color: #3b82f6 !important; /* blue-500 - blue background */
     border: 1px solid #2563eb !important; /* blue-600 */
     color: #ffffff !important; /* Keep white text as specified in HTML */
   }
   #validKeys li button.bg-blue-500:hover,
   #invalidKeys li button.bg-blue-500:hover {
-    background-color: #2563eb !important; /* blue-600 - 深蓝色hover */
+    background-color: #2563eb !important; /* blue-600 - deep blue hover */
     border-color: #1d4ed8 !important; /* blue-700 */
     color: #ffffff !important; /* Keep white text on hover */
   }
 
-  /* 详情按钮 (改为蓝色) */
+  /* Details button (changed to blue) */
   #validKeys li button.bg-purple-600,
   #invalidKeys li button.bg-purple-600 {
     background-color: rgba(59, 130, 246, 0.8) !important; /* blue-500 */
@@ -722,7 +722,7 @@ endblock %} {% block head_extra_styles %}
     border-color: rgba(37, 99, 235, 1);
   }
 
-  /* 删除按钮 (鲜艳浅红色) - HTML中使用 bg-red-800 */
+  /* Delete button (bright light red) - bg-red-800 used in HTML */
   #validKeys li button.bg-red-800,
   #invalidKeys li button.bg-red-800 {
     background-color: #f87171 !important; /* red-400 - bright light red */
@@ -1010,8 +1010,8 @@ endblock %} {% block head_extra_styles %}
     border-color: rgba(153, 27, 27, 0.95);
   }
 
-  /* 新增：密钥列表内状态标签颜色调整 */
-  /* 有效标签 (绿色) - 改为更好的对比度 */
+  /* New: Status label color adjustment in key list */
+  /* Valid label (green) - changed for better contrast */
   #validKeys li span.bg-success-50.text-success-600,
   #invalidKeys li span.bg-success-50.text-success-600 {
     background-color: rgba(34, 197, 94, 0.15) !important; /* green-500 with low opacity */
@@ -1021,26 +1021,26 @@ endblock %} {% block head_extra_styles %}
     text-shadow: none !important; /* Remove any text shadow */
   }
 
-  /* 失败计数标签 (黄色) - 改为更好的对比度 */
+  /* Failure count label (yellow) - changed for better contrast */
   #validKeys li span.bg-amber-50.text-amber-600,
   #invalidKeys li span.bg-amber-50.text-amber-600 {
     background-color: rgba(251, 191, 36, 0.15) !important; /* amber-400 with low opacity */
     color: #d97706 !important; /* amber-600 for better contrast on light background */
     border: 1px solid rgba(217, 119, 6, 0.3) !important; /* amber-600 border */
-    position: absolute; /* 移动到右下角 */
-    bottom: 0.75rem; /* 配合li的p-3内边距 */
+    position: absolute; /* Move to bottom right corner */
+    bottom: 0.75rem; /* Match li p-3 padding */
     right: 0.75rem;
-    z-index: 5; /* 确保在其他元素之上 */
+    z-index: 5; /* Ensure above other elements */
     font-weight: 600 !important; /* Make text bolder for better readability */
     text-shadow: none !important; /* Remove any text shadow */
   }
 
-  /* 无效标签 (红色) - for invalidKeys list */
+  /* Invalid label (red) - for invalidKeys list */
   #invalidKeys li span.bg-danger-50.text-danger-600 {
-    background-color: rgba(239, 68, 68, 0.08) !important; /* 更浅的背景色 */
-    color: #f87171 !important; /* 更浅的红色文字 */
-    border: 1px solid rgba(239, 68, 68, 0.15); /* 更浅的边框 */
-    font-weight: 600 !important; /* 加粗字体 */
+    background-color: rgba(239, 68, 68, 0.08) !important; /* Lighter background color */
+    color: #f87171 !important; /* Lighter red text */
+    border: 1px solid rgba(239, 68, 68, 0.15); /* Lighter border */
+    font-weight: 600 !important; /* Bold font */
   }
 
   /* Remove border from the last row's cells in API Call Details Modal table */
@@ -1070,7 +1070,7 @@ endblock %} {% block head_extra_styles %}
   }
   /* End of API Call Details Modal Specific Styling Adjustments */
 
-  /* 下拉菜单样式 */
+  /* Dropdown menu style */
   .dropdown-menu {
     position: absolute;
     top: 100%;
@@ -1143,33 +1143,33 @@ endblock %} {% block head_extra_styles %}
   <!-- Increased max-width -->
   <div class="glass-card rounded-2xl shadow-xl p-6 md:p-8">
     <div class="absolute top-6 right-6 flex items-center gap-3">
-      <!-- 手动刷新按钮 -->
+      <!-- Manual refresh button -->
       <button
         class="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full w-8 h-8 flex items-center justify-center text-primary-600 transition-all duration-300"
         onclick="refreshPage(this)"
-        title="手动刷新"
+        title="Manual Refresh"
       >
         <i class="fas fa-sync-alt"></i>
       </button>
-      <!-- 下拉菜单按钮 -->
+      <!-- Dropdown menu button -->
       <div class="dropdown-toggle relative">
         <button
           id="dropdownMenuButton"
           class="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full w-8 h-8 flex items-center justify-center text-primary-600 transition-all duration-300"
           onclick="toggleDropdownMenu()"
-          title="更多操作"
+          title="More Actions"
         >
           <i class="fas fa-ellipsis-v"></i>
         </button>
-        <!-- 下拉菜单 -->
+        <!-- Dropdown menu -->
         <div id="dropdownMenu" class="dropdown-menu">
           <button class="dropdown-item" onclick="copyAllKeys()">
             <i class="fas fa-copy"></i>
-            <span>复制全部密钥</span>
+            <span>Copy all keys</span>
           </button>
           <button class="dropdown-item" onclick="verifyAllKeys()">
             <i class="fas fa-check-double"></i>
-            <span>验证所有密钥</span>
+            <span>Verify all keys</span>
           </button>
         </div>
       </div>
@@ -1183,7 +1183,7 @@ endblock %} {% block head_extra_styles %}
         alt="Gemini Balance Logo"
         class="h-9 inline-block align-middle mr-2"
       />
-      Gemini Balance - 监控面板
+      Gemini Balance - Dashboard
     </h1>
 
     <!-- Navigation Tabs -->
@@ -1193,110 +1193,110 @@ endblock %} {% block head_extra_styles %}
         class="nav-link whitespace-nowrap flex items-center justify-center gap-2 px-6 py-3 font-medium rounded-lg text-gray-700 hover:text-gray-900 transition-all duration-200"
         style="background-color: rgba(229, 231, 235, 0.8)"
       >
-        <i class="fas fa-cog"></i> 配置编辑
+        <i class="fas fa-cog"></i> Config Edit
       </a>
       <a
         href="/keys"
         class="main-nav-btn whitespace-nowrap flex items-center justify-center gap-2 px-6 py-3 font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
         style="background-color: #3b82f6 !important; color: #ffffff !important;"
       >
-        <i class="fas fa-tachometer-alt"></i> 监控面板
+        <i class="fas fa-tachometer-alt"></i> Dashboard
       </a>
       <a
         href="/logs"
         class="nav-link whitespace-nowrap flex items-center justify-center gap-2 px-6 py-3 font-medium rounded-lg text-gray-700 hover:text-gray-900 transition-all duration-200"
         style="background-color: rgba(229, 231, 235, 0.8)"
       >
-        <i class="fas fa-exclamation-triangle"></i> 错误日志
+        <i class="fas fa-exclamation-triangle"></i> Error Logs
       </a>
     </div>
 
-    <!-- 现代化统计面板 -->
+    <!-- Modern Statistics Panel -->
     <div class="stats-dashboard animate-fade-in" style="animation-delay: 0.1s">
-      <!-- 密钥统计卡片 -->
+      <!-- Key Statistics Card -->
       <div class="stats-card">
         <div class="stats-card-header">
           <h3 class="stats-card-title">
             <i class="fas fa-key"></i>
-            <span>密钥统计</span>
+            <span>Key Statistics</span>
           </h3>
-          <span class="text-xs text-gray-500">总计: {{ total_keys }}</span>
+          <span class="text-xs text-gray-500">Total: {{ total_keys }}</span>
         </div>
         <div class="stats-grid">
-          <div class="stat-item stat-primary" title="总密钥数">
+          <div class="stat-item stat-primary" title="Total Keys">
             <div class="stat-value">{{ total_keys }}</div>
-            <div class="stat-label">总密钥数</div>
+            <div class="stat-label">Total Keys</div>
             <i class="stat-icon fas fa-key"></i>
           </div>
-          <div class="stat-item stat-success" title="有效密钥">
+          <div class="stat-item stat-success" title="Valid Keys">
             <div class="stat-value">{{ valid_key_count }}</div>
-            <div class="stat-label">有效密钥</div>
+            <div class="stat-label">Valid Keys</div>
             <i class="stat-icon fas fa-check-circle"></i>
           </div>
-          <div class="stat-item stat-danger" title="无效密钥">
+          <div class="stat-item stat-danger" title="Invalid Keys">
             <div class="stat-value">{{ invalid_key_count }}</div>
-            <div class="stat-label">无效密钥</div>
+            <div class="stat-label">Invalid Keys</div>
             <i class="stat-icon fas fa-times-circle"></i>
           </div>
         </div>
       </div>
 
-      <!-- API调用统计卡片 -->
+      <!-- API Call Statistics Card -->
       <div class="stats-card">
         <div class="stats-card-header">
           <h3 class="stats-card-title">
             <i class="fas fa-chart-line"></i>
-            <span>API调用统计</span>
+            <span>API Call Statistics</span>
           </h3>
           <span class="text-xs text-gray-500"
-            >本月: {{ api_stats.calls_month.total }}</span
+            >Month: {{ api_stats.calls_month.total }}</span
           >
         </div>
         <div class="stats-grid">
           <div
             class="stat-item stat-warning cursor-pointer hover:bg-amber-100"
-            title="点击查看1分钟内调用详情"
+            title="Click to view call details within 1 minute"
             data-period="1m"
             onclick="showApiCallDetails('1m', '{{ api_stats.calls_1m.total }}', '{{ api_stats.calls_1m.success }}', '{{ api_stats.calls_1m.failure }}')"
           >
             <div class="stat-value">{{ api_stats.calls_1m.total }}</div>
-            <div class="stat-label">1分钟调用</div>
+            <div class="stat-label">1-min Calls</div>
             <i class="stat-icon fas fa-stopwatch"></i>
           </div>
           <div
             class="stat-item stat-info cursor-pointer hover:bg-blue-100"
-            title="点击查看1小时内调用详情"
+            title="Click to view call details within 1 hour"
             data-period="1h"
             onclick="showApiCallDetails('1h', '{{ api_stats.calls_1h.total }}', '{{ api_stats.calls_1h.success }}', '{{ api_stats.calls_1h.failure }}')"
           >
             <div class="stat-value">{{ api_stats.calls_1h.total }}</div>
-            <div class="stat-label">1小时调用</div>
+            <div class="stat-label">1-hour Calls</div>
             <i class="stat-icon fas fa-hourglass-half"></i>
           </div>
           <div
             class="stat-item stat-primary cursor-pointer hover:bg-indigo-100"
-            title="点击查看24小时内调用详情"
+            title="Click to view call details within 24 hours"
             data-period="24h"
             onclick="showApiCallDetails('24h', '{{ api_stats.calls_24h.total }}', '{{ api_stats.calls_24h.success }}', '{{ api_stats.calls_24h.failure }}')"
           >
             <div class="stat-value">{{ api_stats.calls_24h.total }}</div>
-            <div class="stat-label">24小时调用</div>
+            <div class="stat-label">24-hour Calls</div>
             <i class="stat-icon fas fa-calendar-day"></i>
           </div>
         </div>
       </div>
 
-      <!-- 可切换时间区间的成功/失败图表卡片 -->
+      <!-- Switchable success/failure chart card -->
       <div class="stats-card chart-wide">
         <div class="stats-card-header">
           <h3 class="stats-card-title">
             <i class="fas fa-chart-bar"></i>
-            <span>调用趋势图</span>
+            <span>Call Trend Chart</span>
           </h3>
           <div class="flex items-center gap-2 text-xs">
-            <button id="chartBtn1h" class="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700">1小时</button>
-            <button id="chartBtn8h" class="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700">8小时</button>
-            <button id="chartBtn24h" class="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700">24小时</button>
+            <button id="chartBtn1h" class="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700">1 Hour</button>
+            <button id="chartBtn8h" class="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700">8 Hours</button>
+            <button id="chartBtn24h" class="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700">24 Hours</button>
           </div>
         </div>
         <div class="p-4 chart-container">
@@ -1304,25 +1304,25 @@ endblock %} {% block head_extra_styles %}
         </div>
       </div>
 
-      <!-- 值得注意的 Key 卡片（错误码统计，可切换） -->
+      <!-- Notable Key Card (Most error codes in 24h, switchable) -->
       <div class="stats-card chart-wide">
         <div class="stats-card-header">
           <h3 class="stats-card-title">
             <i class="fas fa-exclamation-circle"></i>
-            <span>值得注意的Key（24h内错误码最多）</span>
+            <span>Notable Keys (Most error codes in 24h)</span>
           </h3>
           <div class="flex items-center gap-2 text-xs">
             <button id="attentionErr429" class="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700" title="429 Too Many Requests">429</button>
             <button id="attentionErr403" class="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700" title="403 Forbidden">403</button>
             <button id="attentionErr400" class="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-gray-700" title="400 Bad Request">400</button>
             <div class="flex items-center gap-1 ml-2">
-              <input id="attentionErrCustom" type="number" min="100" max="599" placeholder="自定义" class="form-input h-7 w-20 px-2 py-1 text-xs border rounded focus:ring-primary-500 focus:border-primary-500" />
-              <button id="attentionErrGo" class="px-2 py-1 rounded bg-blue-500 hover:bg-blue-600 text-white" title="查询">查询</button>
+              <input id="attentionErrCustom" type="number" min="100" max="599" placeholder="Custom" class="form-input h-7 w-20 px-2 py-1 text-xs border rounded focus:ring-primary-500 focus:border-primary-500" />
+              <button id="attentionErrGo" class="px-2 py-1 rounded bg-blue-500 hover:bg-blue-600 text-white" title="Query">Query</button>
             </div>
             <div class="flex items-center gap-2 ml-3">
-              <label for="attentionLimitInput" class="text-xs text-gray-600">数量</label>
+              <label for="attentionLimitInput" class="text-xs text-gray-600">Limit</label>
               <input id="attentionLimitInput" type="number" min="1" max="1000" value="10" class="form-input h-7 w-20 px-2 py-1 text-xs border rounded focus:ring-primary-500 focus:border-primary-500" />
-              <!-- 全选移动到数量输入框右侧 -->
+              <!-- Select All moved to right of limit input -->
               <div class="flex items-center gap-1">
                 <input
                   type="checkbox"
@@ -1330,51 +1330,51 @@ endblock %} {% block head_extra_styles %}
                   class="form-checkbox h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                   onchange="toggleSelectAll('attention', this.checked)"
                 />
-                <label for="selectAllAttention" class="text-xs select-none whitespace-nowrap font-semibold" style="color: #1f2937 !important;">全选</label>
+                <label for="selectAllAttention" class="text-xs select-none whitespace-nowrap font-semibold" style="color: #1f2937 !important;">Select All</label>
               </div>
             </div>
           </div>
         </div>
       <div class="p-4">
-        <!-- 批量操作按钮组 (仅在选中时显示) -->
+        <!-- Bulk Actions Group (displayed only when items selected) -->
         <div
           id="attentionBatchActions"
           class="p-3 border mb-3 hidden flex items-center flex-wrap gap-3"
           style="background-color: rgba(249, 250, 251, 0.95); border-color: rgba(0, 0, 0, 0.08);"
         >
           <span class="text-sm font-semibold whitespace-nowrap" style="color: #1f2937 !important;">
-            已选择 <span id="attentionSelectedCount">0</span> 项
+            Selected <span id="attentionSelectedCount">0</span> items
           </span>
           <button
             class="flex items-center gap-1 bg-success-600 hover:bg-success-700 text-white px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 disabled:cursor-not-allowed"
             onclick="event.stopPropagation(); showVerifyModal('attention', event)"
             disabled
           >
-            <i class="fas fa-check-double"></i> 批量验证
+            <i class="fas fa-check-double"></i> Bulk Verify
           </button>
           <button
             class="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 disabled:cursor-not-allowed"
             onclick="event.stopPropagation(); copySelectedKeys('attention')"
             disabled
           >
-            <i class="fas fa-copy"></i> 批量复制
+            <i class="fas fa-copy"></i> Bulk Copy
           </button>
           <button
             class="flex items-center gap-1 bg-red-800 hover:bg-red-900 text-white px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 disabled:cursor-not-allowed"
             onclick="event.stopPropagation(); showDeleteConfirmationModal('attention', event)"
             disabled
           >
-            <i class="fas fa-trash-alt"></i> 批量删除
+            <i class="fas fa-trash-alt"></i> Bulk Delete
           </button>
         </div>
         <ul id="attentionKeysList" class="space-y-2">
-          <li class="text-center text-gray-500 py-2">加载中...</li>
+          <li class="text-center text-gray-500 py-2">Loading...</li>
         </ul>
       </div>
     </div>
   </div>
 
-    <!-- 有效密钥区域 -->
+    <!-- Valid Keys Area -->
     <div class="stats-card mb-6 animate-fade-in" style="animation-delay: 0.2s">
       <div
         class="stats-card-header cursor-pointer"
@@ -1386,7 +1386,7 @@ endblock %} {% block head_extra_styles %}
           <i class="fas fa-chevron-down toggle-icon text-primary-600"></i>
           <i class="fas fa-check-circle text-success-500"></i>
           <h2 class="text-lg font-semibold whitespace-nowrap">
-            有效密钥列表 ({{ valid_key_count }})
+            Valid Keys List ({{ valid_key_count }})
           </h2>
         </div>
         <!-- Middle: Filters and Search (Allow wrapping) -->
@@ -1394,13 +1394,13 @@ endblock %} {% block head_extra_styles %}
           class="flex items-center gap-x-4 gap-y-2 flex-grow flex-wrap justify-start md:justify-center"
         >
           <!-- Allow wrapping, center on medium+ -->
-          <!-- 失败次数筛选 -->
+          <!-- Failure Count Filter -->
           <div class="flex items-center gap-1">
             <label
               for="failCountThreshold"
               class="text-sm select-none whitespace-nowrap font-semibold"
               style="color: #1f2937 !important;"
-              >失败次数≥</label
+              >Fail Count ≥</label
             >
             <input
               type="number"
@@ -1411,29 +1411,29 @@ endblock %} {% block head_extra_styles %}
               onclick="event.stopPropagation();"
             />
           </div>
-          <!-- 密钥搜索 -->
+          <!-- Key Search -->
           <div class="flex items-center gap-1">
             <label
               for="keySearchInput"
               class="text-sm select-none whitespace-nowrap font-semibold"
               style="color: #1f2937 !important;"
-              ><i class="fas fa-search mr-1"></i>搜索</label
+              ><i class="fas fa-search mr-1"></i>Search</label
             >
             <input
               type="search"
               id="keySearchInput"
-              placeholder="输入密钥..."
+              placeholder="Enter Key..."
               class="form-input h-7 w-32 px-2 py-1 text-sm border rounded focus:ring-primary-500 focus:border-primary-500"
               onclick="event.stopPropagation();"
             />
           </div>
-          <!-- 每页显示数量 -->
+          <!-- Items Per Page -->
           <div class="flex items-center gap-1">
             <label
               for="itemsPerPageSelect"
               class="text-sm select-none whitespace-nowrap font-semibold"
               style="color: #1f2937 !important;"
-              >每页</label
+              >Per page</label
             >
             <select
               id="itemsPerPageSelect"
@@ -1446,7 +1446,7 @@ endblock %} {% block head_extra_styles %}
               <option value="100">100</option>
               <option value="500">500</option>
             </select>
-            <span class="text-sm select-none font-semibold" style="color: #1f2937 !important;">项</span>
+            <span class="text-sm select-none font-semibold" style="color: #1f2937 !important;">items</span>
           </div>
         </div>
         <!-- Right side: Select All -->
@@ -1465,12 +1465,12 @@ endblock %} {% block head_extra_styles %}
             for="selectAllValid"
             class="text-sm select-none whitespace-nowrap font-semibold"
             style="color: #1f2937 !important;"
-            >全选</label
+            >Select All</label
           >
         </div>
       </div>
 
-      <!-- 批量操作按钮组 (仅在选中时显示) -->
+      <!-- Bulk Actions Group (displayed only when items selected) -->
       <div
         id="validBatchActions"
         class="p-3 border-t hidden flex items-center flex-wrap gap-3"
@@ -1481,14 +1481,14 @@ endblock %} {% block head_extra_styles %}
       >
         <!-- Added flex-wrap -->
         <span class="text-sm font-semibold whitespace-nowrap" style="color: #1f2937 !important;"
-          >已选择 <span id="validSelectedCount">0</span> 项</span
+          >Selected <span id="validSelectedCount">0</span> items</span
         >
         <button
           class="flex items-center gap-1 bg-success-600 hover:bg-success-700 text-white px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 disabled:cursor-not-allowed"
           onclick="event.stopPropagation(); showVerifyModal('valid', event)"
           disabled
         >
-          <i class="fas fa-check-double"></i> 批量验证
+          <i class="fas fa-check-double"></i> Bulk Verify
         </button>
         <button
           class="flex items-center gap-1 bg-gray-500 hover:bg-gray-600 text-white px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 disabled:cursor-not-allowed"
@@ -1497,21 +1497,21 @@ endblock %} {% block head_extra_styles %}
           data-reset-type="valid"
           disabled
         >
-          <i class="fas fa-redo-alt"></i> 批量重置
+          <i class="fas fa-redo-alt"></i> Bulk Reset
         </button>
         <button
           class="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 disabled:cursor-not-allowed"
           onclick="event.stopPropagation(); copySelectedKeys('valid')"
           disabled
         >
-          <i class="fas fa-copy"></i> 批量复制
+          <i class="fas fa-copy"></i> Bulk Copy
         </button>
         <button
           class="flex items-center gap-1 bg-red-800 hover:bg-red-900 text-white px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 disabled:cursor-not-allowed"
           onclick="event.stopPropagation(); showDeleteConfirmationModal('valid', event)"
           disabled
         >
-          <i class="fas fa-trash-alt"></i> 批量删除
+          <i class="fas fa-trash-alt"></i> Bulk Delete
         </button>
       </div>
 
@@ -1523,7 +1523,7 @@ endblock %} {% block head_extra_styles %}
              <i class="fas fa-spinner fa-spin"></i> Loading keys...
           </li>
         </ul>
-        <!-- 有效密钥分页控件容器 -->
+        <!-- Valid key pagination control container -->
         <div
           id="validPaginationControls"
           class="flex justify-center items-center mt-4 space-x-2"
@@ -1533,7 +1533,7 @@ endblock %} {% block head_extra_styles %}
       </div>
     </div>
 
-    <!-- 无效密钥区域 -->
+    <!-- Invalid Keys Area -->
     <div class="stats-card mb-6 animate-fade-in" style="animation-delay: 0.4s">
       <div
         class="stats-card-header cursor-pointer"
@@ -1545,7 +1545,7 @@ endblock %} {% block head_extra_styles %}
           <i class="fas fa-chevron-down toggle-icon text-primary-600"></i>
           <i class="fas fa-times-circle text-danger-500"></i>
           <h2 class="text-lg font-semibold whitespace-nowrap">
-            无效密钥列表 ({{ invalid_key_count }})
+            Invalid Keys List ({{ invalid_key_count }})
           </h2>
         </div>
         <!-- Middle: Filters and Search (Allow wrapping) -->
@@ -1553,13 +1553,13 @@ endblock %} {% block head_extra_styles %}
           class="flex items-center gap-x-4 gap-y-2 flex-grow flex-wrap justify-start md:justify-center"
         >
           <!-- Allow wrapping, center on medium+ -->
-          <!-- 失败次数筛选 -->
+          <!-- Failure Count Filter -->
           <div class="flex items-center gap-1">
             <label
               for="invalidFailCountThreshold"
               class="text-sm select-none whitespace-nowrap font-semibold"
               style="color: #1f2937 !important;"
-              >失败次数≥</label
+              >Fail Count ≥</label
             >
             <input
               type="number"
@@ -1570,29 +1570,29 @@ endblock %} {% block head_extra_styles %}
               onclick="event.stopPropagation();"
             />
           </div>
-          <!-- 密钥搜索 -->
+          <!-- Key Search -->
           <div class="flex items-center gap-1">
             <label
               for="invalidKeySearchInput"
               class="text-sm select-none whitespace-nowrap font-semibold"
               style="color: #1f2937 !important;"
-              ><i class="fas fa-search mr-1"></i>搜索</label
+              ><i class="fas fa-search mr-1"></i>Search</label
             >
             <input
               type="search"
               id="invalidKeySearchInput"
-              placeholder="输入密钥..."
+              placeholder="Enter Key..."
               class="form-input h-7 w-32 px-2 py-1 text-sm border rounded focus:ring-primary-500 focus:border-primary-500"
               onclick="event.stopPropagation();"
             />
           </div>
-          <!-- 每页显示数量 -->
+          <!-- Items Per Page -->
           <div class="flex items-center gap-1">
             <label
               for="invalidItemsPerPageSelect"
               class="text-sm select-none whitespace-nowrap font-semibold"
               style="color: #1f2937 !important;"
-              >每页</label
+              >Per page</label
             >
             <select
               id="invalidItemsPerPageSelect"
@@ -1605,7 +1605,7 @@ endblock %} {% block head_extra_styles %}
               <option value="100">100</option>
               <option value="500">500</option>
             </select>
-            <span class="text-sm select-none font-semibold" style="color: #1f2937 !important;">项</span>
+            <span class="text-sm select-none font-semibold" style="color: #1f2937 !important;">items</span>
           </div>
         </div>
         <!-- Right side: Select All -->
@@ -1624,12 +1624,12 @@ endblock %} {% block head_extra_styles %}
             for="selectAllInvalid"
             class="text-sm select-none whitespace-nowrap font-semibold"
             style="color: #1f2937 !important;"
-            >全选</label
+            >Select All</label
           >
         </div>
       </div>
 
-      <!-- 批量操作按钮组 (仅在选中时显示) -->
+      <!-- Bulk Actions Group (displayed only when items selected) -->
       <div
         id="invalidBatchActions"
         class="p-3 border-t hidden flex items-center flex-wrap gap-3"
@@ -1640,14 +1640,14 @@ endblock %} {% block head_extra_styles %}
       >
         <!-- Added flex-wrap -->
         <span class="text-sm font-semibold whitespace-nowrap" style="color: #1f2937 !important;"
-          >已选择 <span id="invalidSelectedCount">0</span> 项</span
+          >Selected <span id="invalidSelectedCount">0</span> items</span
         >
         <button
           class="flex items-center gap-1 bg-success-600 hover:bg-success-700 text-white px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 disabled:cursor-not-allowed"
           onclick="event.stopPropagation(); showVerifyModal('invalid', event)"
           disabled
         >
-          <i class="fas fa-check-double"></i> 批量验证
+          <i class="fas fa-check-double"></i> Bulk Verify
         </button>
         <button
           class="flex items-center gap-1 bg-gray-500 hover:bg-gray-600 text-white px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 disabled:cursor-not-allowed"
@@ -1656,21 +1656,21 @@ endblock %} {% block head_extra_styles %}
           data-reset-type="invalid"
           disabled
         >
-          <i class="fas fa-redo-alt"></i> 批量重置
+          <i class="fas fa-redo-alt"></i> Bulk Reset
         </button>
         <button
           class="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 disabled:cursor-not-allowed"
           onclick="event.stopPropagation(); copySelectedKeys('invalid')"
           disabled
         >
-          <i class="fas fa-copy"></i> 批量复制
+          <i class="fas fa-copy"></i> Bulk Copy
         </button>
         <button
           class="flex items-center gap-1 bg-red-800 hover:bg-red-900 text-white px-2.5 py-1 rounded-lg text-xs font-medium transition-all duration-200 disabled:cursor-not-allowed"
           onclick="event.stopPropagation(); showDeleteConfirmationModal('invalid', event)"
           disabled
         >
-          <i class="fas fa-trash-alt"></i> 批量删除
+          <i class="fas fa-trash-alt"></i> Bulk Delete
         </button>
       </div>
 
@@ -1682,7 +1682,7 @@ endblock %} {% block head_extra_styles %}
              <i class="fas fa-spinner fa-spin"></i> Loading keys...
           </li>
         </ul>
-        <!-- 无效密钥分页控件容器 -->
+        <!-- Invalid key pagination control container -->
         <div
           id="invalidPaginationControls"
           class="flex justify-center items-center mt-4 space-x-2"
@@ -1698,17 +1698,17 @@ endblock %} {% block head_extra_styles %}
 
 <!-- Scroll buttons are now in base.html -->
 <div class="scroll-buttons">
-  <button class="scroll-button" onclick="scrollToTop()" title="回到顶部">
+  <button class="scroll-button" onclick="scrollToTop()" title="Scroll to top">
     <i class="fas fa-chevron-up"></i>
   </button>
-  <button class="scroll-button" onclick="scrollToBottom()" title="滚动到底部">
+  <button class="scroll-button" onclick="scrollToBottom()" title="Scroll to bottom">
     <i class="fas fa-chevron-down"></i>
   </button>
 </div>
 
 <!-- Notification component is now in base.html (use id="notification") -->
 <div id="notification" class="notification"></div>
-<!-- 重置确认模态框 -->
+<!-- Reset Confirmation Modal -->
 <div
   id="resetModal"
   class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
@@ -1718,7 +1718,7 @@ endblock %} {% block head_extra_styles %}
   >
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-lg font-semibold text-gray-800" id="resetModalTitle">
-        批量重置失败次数
+        Bulk Reset Failure Counts
       </h3>
       <button
         onclick="closeResetModal()"
@@ -1736,18 +1736,18 @@ endblock %} {% block head_extra_styles %}
         class="px-3 py-1.5 text-xs font-medium bg-slate-500 hover:bg-slate-600 text-white rounded-lg transition-colors"
         style="color: #ffffff !important;"
       >
-        取消
+        Cancel
       </button>
       <button
         id="confirmResetBtn"
         class="px-3 py-1.5 text-xs font-medium bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
       >
-        确认
+        Confirm
       </button>
     </div>
   </div>
 </div>
-<!-- 验证确认模态框 -->
+<!-- Verification Confirmation Modal -->
 <div
   id="verifyModal"
   class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
@@ -1769,7 +1769,7 @@ endblock %} {% block head_extra_styles %}
           font-weight: 600;
         "
       >
-        批量验证密钥
+        Bulk Verify Keys
       </h3>
       <button
         onclick="closeVerifyModal()"
@@ -1781,7 +1781,7 @@ endblock %} {% block head_extra_styles %}
     <div class="mb-6">
       <p style="color: #374151" id="verifyModalMessage" class="mb-4"></p>
       <div class="flex items-center gap-2">
-        <label for="batchSize" class="text-sm font-medium" style="color: #374151;">每批次验证数量:</label>
+        <label for="batchSize" class="text-sm font-medium" style="color: #374151;">Verification batch size:</label>
         <input type="number" id="batchSize" value="10" min="1" class="form-input h-8 w-20 px-2 py-1 text-sm border rounded focus:ring-primary-500 focus:border-primary-500">
       </div>
     </div>
@@ -1791,19 +1791,19 @@ endblock %} {% block head_extra_styles %}
         class="px-3 py-1.5 text-xs font-medium bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors"
         style="color: #ffffff !important;"
       >
-        取消
+        Cancel
       </button>
       <button
         id="confirmVerifyBtn"
         class="px-3 py-1.5 text-xs font-medium bg-success-600 hover:bg-success-700 text-white rounded-lg transition-colors"
       >
-        确认验证
+        Confirm Verification
       </button>
     </div>
   </div>
 </div>
 
-<!-- 删除确认模态框 -->
+<!-- Delete Confirmation Modal -->
 <div
   id="deleteConfirmModal"
   class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
@@ -1825,7 +1825,7 @@ endblock %} {% block head_extra_styles %}
           font-weight: 600;
         "
       >
-        确认删除
+        Confirm Delete
       </h3>
       <button
         onclick="closeDeleteConfirmationModal()"
@@ -1843,19 +1843,19 @@ endblock %} {% block head_extra_styles %}
         class="px-3 py-1.5 text-xs font-medium bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors"
         style="color: #ffffff !important;"
       >
-        取消
+        Cancel
       </button>
       <button
         id="confirmDeleteBtn"
         class="px-3 py-1.5 text-xs font-medium bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors"
       >
-        确认删除
+        Confirm Delete
       </button>
     </div>
   </div>
 </div>
 
-<!-- 新增：单个密钥删除确认模态框 -->
+<!-- New: Single Key Delete Confirmation Modal -->
 <div
   id="singleKeyDeleteConfirmModal"
   class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
@@ -1877,7 +1877,7 @@ endblock %} {% block head_extra_styles %}
           font-weight: 600;
         "
       >
-        确认删除密钥
+        Confirm Key Deletion
       </h3>
       <button
         onclick="closeSingleKeyDeleteConfirmModal()"
@@ -1895,19 +1895,19 @@ endblock %} {% block head_extra_styles %}
         class="px-3 py-1.5 text-xs font-medium bg-slate-600 hover:bg-slate-700 text-white rounded-lg transition-colors"
         style="color: #ffffff !important;"
       >
-        取消
+        Cancel
       </button>
       <button
         id="confirmSingleKeyDeleteBtn"
         class="px-3 py-1.5 text-xs font-medium bg-red-700 hover:bg-red-800 text-white rounded-lg transition-colors"
       >
-        确认删除
+        Confirm Delete
       </button>
     </div>
   </div>
 </div>
 
-<!-- 批量操作进度模态框 -->
+<!-- Bulk Action Progress Modal -->
 <div
   id="progressModal"
   class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
@@ -1926,7 +1926,7 @@ endblock %} {% block head_extra_styles %}
         id="progressModalTitle"
         style="color: #1f2937; font-weight: 600"
       >
-        批量操作进度
+        Bulk Action Progress
       </h3>
       <button
         onclick="closeProgressModal()"
@@ -1939,7 +1939,7 @@ endblock %} {% block head_extra_styles %}
     </div>
     <div class="mb-4">
       <p id="progressStatusText" class="text-sm text-gray-600 mb-2">
-        准备开始...
+        Preparing to start...
       </p>
       <div class="w-full bg-gray-200 rounded-full h-4 dark:bg-gray-700">
         <div
@@ -1973,13 +1973,13 @@ endblock %} {% block head_extra_styles %}
         class="px-4 py-1.5 text-sm font-medium bg-primary-700 hover:bg-primary-800 text-white rounded-lg transition-colors"
         disabled
       >
-        完成并刷新
+        Finish and Refresh
       </button>
     </div>
   </div>
 </div>
 
-<!-- 操作结果模态框 -->
+<!-- Action Result Modal -->
 <div
   id="resultModal"
   class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden"
@@ -1994,7 +1994,7 @@ endblock %} {% block head_extra_styles %}
         id="resultModalTitle"
         style="letter-spacing: 0.05em"
       >
-        操作结果
+        Action Result
       </h3>
       <button
         onclick="closeResultModal()"
@@ -2023,13 +2023,13 @@ endblock %} {% block head_extra_styles %}
         onclick="closeResultModal()"
         class="px-5 py-1.5 text-sm font-semibold bg-primary-700 hover:bg-primary-800 text-white rounded-lg shadow transition-colors"
       >
-        确定
+        OK
       </button>
     </div>
   </div>
 </div>
 
-<!-- API 调用详情模态框 -->
+<!-- API Call Details Modal -->
 <div
   id="apiCallDetailsModal"
   class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
@@ -2043,7 +2043,7 @@ endblock %} {% block head_extra_styles %}
         class="text-xl font-semibold text-gray-800"
         id="apiCallDetailsModalTitle"
       >
-        API 调用详情
+        API Call Details
       </h3>
       <button
         onclick="closeApiCallDetailsModal()"
@@ -2057,10 +2057,10 @@ endblock %} {% block head_extra_styles %}
       class="mb-6 max-h-[60vh] overflow-y-auto pr-2"
     >
       <!-- Increased max-height and added padding-right -->
-      <!-- 详细数据将加载到这里 -->
+      <!-- Detailed data will be loaded here -->
       <div class="text-center py-10">
         <i class="fas fa-spinner fa-spin text-primary-600 text-3xl"></i>
-        <p class="text-gray-500 mt-2">加载中...</p>
+        <p class="text-gray-500 mt-2">Loading...</p>
       </div>
     </div>
     <div class="flex justify-end pt-4 border-t">
@@ -2068,13 +2068,13 @@ endblock %} {% block head_extra_styles %}
         onclick="closeApiCallDetailsModal()"
         class="px-4 py-1.5 text-xs font-medium bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
       >
-        关闭
+        Close
       </button>
     </div>
   </div>
 </div>
 
-<!-- 密钥使用详情模态框 -->
+<!-- Key Usage Details Modal -->
 <div
   id="keyUsageDetailsModal"
   class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden"
@@ -2088,7 +2088,7 @@ endblock %} {% block head_extra_styles %}
         class="text-xl font-semibold text-gray-800"
         id="keyUsageDetailsModalTitle"
       >
-        密钥请求详情
+        Key Request Details
       </h3>
       <button
         onclick="closeKeyUsageDetailsModal()"
@@ -2102,10 +2102,10 @@ endblock %} {% block head_extra_styles %}
       class="mb-6 max-h-[50vh] overflow-y-auto pr-2"
     >
       <!-- Adjusted max-height -->
-      <!-- 详细数据将加载到这里 -->
+      <!-- Detailed data will be loaded here -->
       <div class="text-center py-10">
         <i class="fas fa-spinner fa-spin text-primary-600 text-3xl"></i>
-        <p class="text-gray-500 mt-2">加载中...</p>
+        <p class="text-gray-500 mt-2">Loading...</p>
       </div>
     </div>
     <div class="flex justify-end pt-4 border-t">
@@ -2113,7 +2113,7 @@ endblock %} {% block head_extra_styles %}
         onclick="closeKeyUsageDetailsModal()"
         class="px-4 py-1.5 text-xs font-medium bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
       >
-        关闭
+        Close
       </button>
     </div>
   </div>
