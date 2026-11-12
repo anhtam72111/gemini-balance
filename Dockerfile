@@ -1,8 +1,12 @@
+# Base pinned by tag python:3.10-slim (same major.minor as the original image
+# built 2025-09-23). The exact base digest used on 2025-09-23 is NOT measurable
+# from a built image (docker history keeps no base RepoDigest) — using a guessed
+# digest would be wrong, so the tag plus the locked requirements below it.
 FROM python:3.10-slim
 
 WORKDIR /app
 
-# 复制所需文件到容器中
+# Copy required files into the container
 COPY ./requirements.txt ./requirements-locked.txt /app/
 COPY ./VERSION /app
 

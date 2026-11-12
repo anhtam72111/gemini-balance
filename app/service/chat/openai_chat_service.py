@@ -395,7 +395,7 @@ class OpenAIChatService:
         try:
             while not api_response_task.done():
                 i = i + 1
-                # Periodically send empty data to keep connection alive
+                """Periodically send empty data to keep connection alive"""
                 if i >= settings.FAKE_STREAM_EMPTY_DATA_INTERVAL_SECONDS:
                     i = 0
                     empty_chunk = self.response_handler.handle_response(

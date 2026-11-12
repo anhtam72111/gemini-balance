@@ -374,7 +374,7 @@ async def reset_all_key_fail_counts(
         return JSONResponse(
             {
                 "success": True,
-                "message": f"Failure counts for {key_type} keys have been reset",
+                "message": f"{key_type} keys' failure counts have been reset",
                 "reset_count": len(keys_to_reset),
             }
         )
@@ -438,7 +438,7 @@ async def reset_selected_key_fail_counts(
         return JSONResponse(
             {
                 "success": True,
-                "message": f"Successfully reset failure counts for {reset_count} selected {key_type} keys",
+                "message": f"Successfully reset failure counts of {reset_count} selected {key_type} keys",
                 "reset_count": reset_count,
             }
         )
