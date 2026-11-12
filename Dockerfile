@@ -6,7 +6,10 @@ WORKDIR /app
 COPY ./requirements.txt /app
 COPY ./VERSION /app
 
-RUN pip install --no-cache-dir -r requirements.txt
+# REQ-270/TH-661 bước 3b (PO #44713): ĐÓNG BĂNG THƯ VIỆN theo image gốc 23-09
+# (pip freeze trong ghcr.io/snailyp/gemini-balance@1508249) — build từ tip hôm nay
+# kéo thư viện mới gây 500 jinja; lock giữ đúng bộ version image đang chạy.
+RUN pip install --no-cache-dir -r requirements-locked.txt
 COPY ./app /app/app
 ENV API_KEYS='["your_api_key_1"]'
 ENV ALLOWED_TOKENS='["your_token_1"]'
