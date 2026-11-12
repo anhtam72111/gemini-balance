@@ -16,7 +16,7 @@ logger = get_request_log_logger()
 
 async def delete_old_request_logs_task():
     """
-    定时删除旧的请求日志。
+    Periodically delete old request logs.
     """
     if not settings.AUTO_DELETE_REQUEST_LOGS_ENABLED:
         logger.info(
@@ -40,7 +40,7 @@ async def delete_old_request_logs_task():
 
         result = await database.execute(query)
         logger.info(
-            f"Request logs older than {cutoff_date} potentially deleted. Rows affected: {result}"
+            f"Request logs older than {cutoff_date} potentially deleted. Rows affected: {result.rowcount if result else 'N/A'}"
         )
 
     except Exception as e:

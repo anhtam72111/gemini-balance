@@ -18,23 +18,23 @@ self.addEventListener('install', event => {
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.open(CACHE_NAME).then(cache => {
-      // 1. 尝试从缓存获取
+      // 1. Try to get from cache
       return cache.match(event.request).then(responseFromCache => {
-        // 2. 同时从网络获取 (后台进行)
+        // 2. Simultaneously fetch from network (background process)
         const fetchPromise = fetch(event.request).then(responseFromNetwork => {
-          // 3. 网络请求成功，更新缓存
+          // 3. Network request success, update cache
           cache.put(event.request, responseFromNetwork.clone());
           return responseFromNetwork;
         }).catch(err => {
-          // 网络请求失败时，可以选择记录错误或不执行任何操作
+          // Network request failed, can choose to log error or do nothing
           console.error('Network fetch failed:', err);
-          // 确保即使网络失败，如果缓存存在，我们仍然返回缓存
-          // 如果缓存也不存在，则此 Promise 会 reject
+          // Ensure even if network fails, if cache exists, we still return cache
+          // If cache also doesn't exist, this Promise will reject
           throw err;
         });
 
-        // 4. 如果缓存存在，立即返回缓存；否则等待网络响应
-        //    后台的网络请求仍在进行，用于更新缓存
+        // 4. If cache exists, return cache immediately; otherwise wait for network response
+        //    Background network request still ongoing to update cache
         return responseFromCache || fetchPromise;
       });
     })

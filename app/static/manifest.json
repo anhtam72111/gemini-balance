@@ -1,7 +1,7 @@
 {
   "name": "Gemini Balance",
   "short_name": "GBalance",
-  "description": "Gemini API密钥管理工具",
+  "description": "Gemini API Key Management Tool",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#667eea",

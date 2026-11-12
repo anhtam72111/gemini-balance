@@ -1,363 +1,319 @@
-# 原生Gemini TTS功能
+# Native Gemini TTS Functionality
 
-这个模块为Gemini Balance项目添加了原生Gemini TTS（Text-to-Speech）功能，支持单人和多人语音合成，采用智能检测和继承模式设计，保持与原始代码的完全兼容性。
+This module adds native Gemini TTS (Text-to-Speech) functionality to the Gemini Balance project, supporting single and multi-speaker voice synthesis. It uses an intelligent detection and inheritance-based design to maintain full compatibility with the original codebase.
 
-## 🎯 设计原则
+## 🎯 Design Principles
 
-- **智能检测**：自动检测所有原生Gemini TTS格式的请求（包含responseModalities和speechConfig）
-- **继承而非修改**：所有扩展都继承自原始类，不修改源码
-- **完全兼容**：原有TTS功能（OpenAI兼容TTS）完全不受影响
-- **动态模型选择**：支持用户在请求URL中指定不同的TTS模型
-- **自动回退**：原生TTS处理失败时自动回退到标准服务
-- **完整日志记录**：包含请求日志、错误日志和性能监控
-- **易于维护**：更新原始代码时不会产生冲突
+- **Intelligent Detection**: Automatically detects all requests in native Gemini TTS format (containing `responseModalities` and `speechConfig`).
+- **Inheritance instead of Modification**: All extensions inherit from original classes without modifying source code.
+- **Full Compatibility**: Original TTS functionality (OpenAI-compatible TTS) remains completely unaffected.
+- **Dynamic Model Selection**: Allows users to specify different TTS models in the request URL.
+- **Automatic Fallback**: Automatically falls back to the standard service if native TTS processing fails.
+- **Comprehensive Logging**: Includes request logs, error logs, and performance monitoring.
+- **Ease of Maintenance**: No conflicts when updating original source code.
 
-## 📁 文件结构
+## 📁 File Structure
 
-```
+```text
 app/service/tts/
-├── tts_service.py           # 原有的OpenAI兼容TTS服务
-└── native/                  # 原生Gemini TTS扩展
-    ├── __init__.py          # 模块初始化
-    ├── README.md            # 使用说明（本文件）
-    ├── tts_models.py        # TTS数据模型（继承自原始模型）
-    ├── tts_response_handler.py  # TTS响应处理器（继承自原始处理器）
-    ├── tts_chat_service.py  # TTS聊天服务（继承自原始服务）
-    └── tts_routes.py        # TTS路由扩展和依赖注入
+├── tts_service.py           # Original OpenAI-compatible TTS service
+└── native/                  # Native Gemini TTS extensions
+    ├── __init__.py          # Module initialization
+    ├── README.md            # Documentation (this file)
+    ├── tts_models.py        # TTS data models (inherits from original models)
+    ├── tts_response_handler.py  # TTS response handler (inherits from original handler)
+    ├── tts_chat_service.py  # TTS chat service (inherits from original service)
+    └── tts_routes.py        # TTS route extensions and dependency injection
 ```
 
-## 🚀 原生Gemini TTS功能
+## 🚀 Native Gemini TTS Features
 
-### 智能检测机制（当前实现）
+### Intelligent Detection Mechanism (Current Implementation)
 
-原生Gemini TTS功能通过智能检测自动启用，无需任何配置：
+Native Gemini TTS is automatically enabled through intelligent detection, requiring no manual configuration:
 
-1. **自动启用**：
+1. **Auto-Enable**:
 ```bash
-# 直接启动服务，原生TTS功能自动可用
+# Simply start the service, native TTS becomes automatically available
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-2. **无需配置**：
-- 不需要环境变量
-- 不需要修改配置文件
-- 完全基于请求内容智能判断
+2. **Zero Configuration**:
+- No environment variables required.
+- No config file modifications needed.
+- Based entirely on intelligent request content inspection.
 
-### 工作原理
+### How It Works
 
-系统会智能检测请求内容：
-- **原生TTS请求**：包含 `responseModalities: ["AUDIO"]` 和 `speechConfig` → 使用TTS增强服务
-  - **单人TTS**：包含 `voiceConfig.prebuiltVoiceConfig`
-  - **多人TTS**：包含 `multiSpeakerVoiceConfig`
-- **普通请求**：非TTS模型 → 使用原有Gemini聊天服务
+The system intelligently detects request content:
+- **Native TTS Request**: Contains `responseModalities: ["AUDIO"]` and `speechConfig` → Uses TTS enhanced service.
+  - **Single Speaker**: Contains `voiceConfig.prebuiltVoiceConfig`.
+  - **Multi-Speaker**: Contains `multiSpeakerVoiceConfig`.
+- **Standard Request**: Non-TTS model → Uses original Gemini chat service.
 
 ```python
-# app/router/gemini_routes.py 中的智能检测逻辑
+# Intelligent detection logic in app/router/gemini_routes.py
 if "tts" in model_name.lower() and request.generationConfig:
-    # 直接从解析后的request对象获取TTS配置
+    # Get TTS configuration directly from the parsed request object
     response_modalities = request.generationConfig.responseModalities or []
     speech_config = request.generationConfig.speechConfig or {}
 
-    # 如果包含AUDIO模态和语音配置，则认为是原生TTS请求
+    # If it contains AUDIO modality and speech configuration, consider it a native TTS request
     if "AUDIO" in response_modalities and speech_config:
-        # 使用TTS增强服务
+        # Use TTS enhanced service
         tts_service = await get_tts_chat_service(key_manager)
         return await tts_service.generate_content(...)
-    # 否则使用原有服务
+    # Otherwise use original service
 ```
 
-## 📝 使用示例
+## 📝 Usage Examples
 
-### 1. 原生Gemini单人TTS请求（使用TTS增强服务）
+### 1. Native Gemini Single-Speaker TTS (using enhanced service)
 
-包含 `voiceConfig.prebuiltVoiceConfig` 的原生Gemini格式请求会自动使用TTS增强服务：
+Native Gemini format requests containing `voiceConfig.prebuiltVoiceConfig` will automatically use the TTS enhanced service:
 
-```bash
-curl -X POST "https://your-domain.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent" \
-  -H "Content-Type: application/json" \
-  -H "x-goog-api-key: your-token" \
-  -d '{
-    "contents": [{
-      "parts": [{
-        "text": "Hello, this is a single speaker test."
-      }]
-    }],
-    "generationConfig": {
-      "responseModalities": ["AUDIO"],
-      "speechConfig": {
-        "voiceConfig": {
-          "prebuiltVoiceConfig": {
-            "voiceName": "Kore"
-          }
+```json
+{
+  "contents": [{
+    "parts": [{"text": "Hello, this is a native Gemini TTS test."}]
+  }],
+  "generationConfig": {
+    "responseModalities": ["AUDIO"],
+    "speechConfig": {
+      "voiceConfig": {
+        "prebuiltVoiceConfig": {
+          "voiceName": "Puck"
         }
       }
     }
-  }'
+  }
+}
 ```
 
-### 2. 原生Gemini多人TTS请求（使用TTS增强服务）
+### 2. Native Gemini Multi-Speaker TTS (using enhanced service)
 
-包含 `multiSpeakerVoiceConfig` 的原生Gemini格式请求会自动使用TTS增强服务：
+Native Gemini format requests containing `multiSpeakerVoiceConfig` will automatically use the TTS enhanced service:
 
-```bash
-curl -X POST "https://your-domain.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent" \
-  -H "Content-Type: application/json" \
-  -H "x-goog-api-key: your-token" \
-  -d '{
-    "contents": [{
-      "parts": [{
-        "text": "Alice: Hello everyone, welcome to our show today.\nBob: Hi Alice, and hello to all our listeners! Today we are talking about AI development."
-      }]
-    }],
-    "generationConfig": {
-      "responseModalities": ["AUDIO"],
-      "speechConfig": {
-        "multiSpeakerVoiceConfig": {
-          "speakerVoiceConfigs": [
-            {
-              "speaker": "Alice",
-              "voiceConfig": {
-                "prebuiltVoiceConfig": {
-                  "voiceName": "Puck"
-                }
-              }
-            },
-            {
-              "speaker": "Bob",
-              "voiceConfig": {
-                "prebuiltVoiceConfig": {
-                  "voiceName": "Kore"
-                }
+```json
+{
+  "contents": [{
+    "role": "user",
+    "parts": [{"text": "Hello! How are you?"}]
+  }],
+  "generationConfig": {
+    "responseModalities": ["AUDIO"],
+    "speechConfig": {
+      "multiSpeakerVoiceConfig": {
+        "speakerVoiceConfigs": [
+          {
+            "speaker": "Assistant",
+            "voiceConfig": {
+              "prebuiltVoiceConfig": {
+                "voiceName": "Kore"
               }
             }
-          ]
-        }
+          }
+        ]
       }
     }
-  }'
+  }
+}
 ```
 
-### 3. OpenAI兼容TTS请求（使用原有服务）
+### 3. OpenAI-Compatible TTS Request (using original service)
 
-OpenAI兼容格式的TTS请求使用不同的API路径，不受本模块影响：
+OpenAI-compatible TTS requests use different API paths and are unaffected by this module:
 
 ```bash
-curl -X POST "https://your-domain.com/v1/audio/speech" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer your-token" \
-  -d '{
+# Path: /v1/audio/speech
+{
     "model": "tts-1",
-    "input": "这是一个OpenAI兼容格式的TTS测试。",
+    "input": "This is an OpenAI-compatible TTS test.",
     "voice": "alloy"
-  }' \
-  --output openai_tts_test.wav
+}
 ```
 
-**注意**：OpenAI兼容TTS请求：
-- 使用路径：`/v1/audio/speech`
-- 使用Authorization头而不是x-goog-api-key
-- 返回音频文件而不是JSON响应
-- 不受本模块的TTS增强服务影响
+**Note**: OpenAI-compatible TTS requests:
+- Use path: `/v1/audio/speech`
+- Use `Authorization` header instead of `x-goog-api-key`.
+- Return an audio file instead of a JSON response.
+- Are not affected by the TTS enhanced service in this module.
 
-### 普通文本生成（使用原有服务）
+### Standard Text Generation (using original service)
 
-非TTS模型的请求会使用原有的Gemini聊天服务，完全不受影响：
+Requests for non-TTS models use the original Gemini chat service, completely unaffected:
 
-```bash
-curl -X POST "https://your-domain.com/v1beta/models/gemini-2.5-flash:generateContent" \
-  -H "Content-Type: application/json" \
-  -H "x-goog-api-key: your-token" \
-  -d '{
-    "contents": [{
-      "parts": [{
-        "text": "请简单介绍一下人工智能的发展历程。"
-      }]
-    }],
-    "generationConfig": {
-      "maxOutputTokens": 200,
-      "temperature": 0.7
-    }
-  }'
+```json
+{
+  "contents": [{
+    "parts": [{"text": "Please provide a brief introduction to the history of AI."}]
+  }]
+}
 ```
 
-## 🔧 技术实现
+## 🔧 Technical Implementation
 
-### 继承关系
+### Inheritance Relationship
 
-```
+```text
 GeminiChatService
-    ↓ (继承)
+    ↓ (Inherits)
 TTSGeminiChatService
-    ├── 重写 generate_content() 方法
-    ├── 添加 _handle_tts_request() 方法
-    └── 集成完整的日志记录功能
+    ├── Overrides generate_content() method
+    ├── Adds _handle_tts_request() method
+    └── Integrates comprehensive logging features
 
 GeminiResponseHandler
-    ↓ (继承)
+    ↓ (Inherits)
 TTSResponseHandler
-    └── 重写 handle_response() 方法
+    └── Overrides handle_response() method
 
-GenerationConfig (Pydantic模型)
-    ↓ (扩展)
+GenerationConfig (Pydantic Model)
+    ↓ (Extends)
 TTSGenerationConfig
-    ├── responseModalities: List[str]
-    └── speechConfig: Dict[str, Any]
 ```
 
-### 工作流程
+### Workflow
 
-1. **请求接收**：系统接收到API请求
-2. **智能检测**：
-   - 检查模型名称是否包含 "tts"
-   - 如果是TTS模型，从 `request.generationConfig` 检查是否包含 `responseModalities: ["AUDIO"]` 和 `speechConfig`
-3. **服务选择**：
-   - **原生TTS请求**：使用 `TTSGeminiChatService` 增强服务
-   - **普通请求**：使用原有 `GeminiChatService`
-4. **请求处理**：
-   - **原生TTS**：使用 `_handle_tts_request()` 特殊处理
-   - **其他请求**：使用标准 `generate_content()` 方法
-5. **字段处理**：从 `request.generationConfig` 直接获取TTS字段（`responseModalities`, `speechConfig`）
-6. **API调用**：构建优化的payload并调用Gemini API
-7. **自动回退**：如果原生TTS处理失败，自动回退到标准服务
-8. **响应处理**：
-   - **TTS响应**：检测音频数据，直接返回原始响应
-   - **普通响应**：使用标准处理方法
-9. **日志记录**：记录请求时间、成功状态、错误信息到数据库
+1. **Request Received**: System receives an API request.
+2. **Intelligent Detection**:
+   - Checks if the model name contains "tts".
+   - If it's a TTS model, checks `request.generationConfig` for `responseModalities: ["AUDIO"]` and `speechConfig`.
+3. **Service Selection**:
+   - **Native TTS Request**: Uses `TTSGeminiChatService` enhanced service.
+   - **Standard Request**: Uses original `GeminiChatService`.
+4. **Request Processing**:
+   - **Native TTS**: Specially handled using `_handle_tts_request()`.
+   - **Other Requests**: Uses standard `generate_content()` method.
+5. **Field Handling**: Obtains TTS fields (`responseModalities`, `speechConfig`) directly from `request.generationConfig`.
+6. **API Call**: Constructs optimized payload and calls Gemini API.
+7. **Automatic Fallback**: If native TTS processing fails, automatically falls back to standard service.
+8. **Response Handling**:
+   - **TTS Response**: Detects audio data, returns original response directly.
+   - **Standard Response**: Uses standard processing methods.
+9. **Logging**: Records request time, success status, and error info to the database.
 
-## 📊 功能特性
+## 📊 Features
 
-### ✅ 已实现功能
+### ✅ Implemented Features
 
-- **智能原生TTS支持**：支持单人和多人语音合成
-  - **单人TTS**：支持 `voiceConfig.prebuiltVoiceConfig` 配置
-  - **多人TTS**：支持 `multiSpeakerVoiceConfig` 配置
-- **智能检测机制**：自动检测所有原生Gemini TTS格式的请求
-- **动态模型选择**：支持用户在URL中指定不同TTS模型
-- **完全向后兼容**：原有TTS功能（OpenAI兼容TTS）完全不受影响
-- **自动回退机制**：原生TTS处理失败时自动使用标准服务
-- **完整日志记录**：请求日志、错误日志、性能监控
-- **API配额管理**：自动重试和密钥轮换
-- **零配置启用**：无需环境变量或配置文件修改
-- **错误处理**：完整的异常捕获和错误记录
+- **Smart Native TTS Support**: Supports single and multi-speaker voice synthesis.
+  - **Single Speaker**: Supports `voiceConfig.prebuiltVoiceConfig` configuration.
+  - **Multi-Speaker**: Supports `multiSpeakerVoiceConfig` configuration.
+- **Intelligent Detection Mechanism**: Automatically detects all native Gemini TTS format requests.
+- **Dynamic Model Selection**: Allows users to specify different TTS models in the URL.
+- **Full Backward Compatibility**: Zero impact on all existing TTS features (OpenAI-compatible).
+- **Automatic Fallback Mechanism**: Uses standard service automatically if native TTS processing fails.
+- **Comprehensive Logging**: Request logs, error logs, performance monitoring.
+- **API Quota Management**: Automatic retries and key rotation.
+- **Zero-Config Activation**: No environment variables or config file changes required.
+- **Error Handling**: Complete exception catching and error logging.
 
-### 🎵 支持的语音配置
+### 🎵 Supported Voice Configurations
 
-#### 单人语音配置
+#### Single Speaker
 
 ```json
-{
-  "responseModalities": ["AUDIO"],
-  "speechConfig": {
-    "voiceConfig": {
-      "prebuiltVoiceConfig": {
-        "voiceName": "Kore|Puck|其他预设语音"
+"voiceConfig": {
+  "prebuiltVoiceConfig": {
+    "voiceName": "Kore|Puck|Other prebuilt voices"
+  }
+}
+```
+
+#### Multi-Speaker
+
+```json
+"multiSpeakerVoiceConfig": {
+  "speakerVoiceConfigs": [
+    {
+      "speaker": "Character Name",
+      "voiceConfig": {
+        "prebuiltVoiceConfig": {
+          "voiceName": "Kore|Puck|Other prebuilt voices"
+        }
       }
     }
-  }
+  ]
 }
 ```
 
-#### 多人语音配置
+## ⚠️ Notes
 
-```json
-{
-  "responseModalities": ["AUDIO"],
-  "speechConfig": {
-    "multiSpeakerVoiceConfig": {
-      "speakerVoiceConfigs": [
-        {
-          "speaker": "角色名称",
-          "voiceConfig": {
-            "prebuiltVoiceConfig": {
-              "voiceName": "Kore|Puck|其他预设语音"
-            }
-          }
-        }
-      ]
-    }
-  }
-}
-```
+### API Requirements
+- Ensure the API key has TTS permissions.
+- TTS functionality requires the `gemini-2.5-flash-preview-tts` model.
+- Be aware of API quota limits (15 times per day for free tier).
 
-## ⚠️ 注意事项
+### Performance Considerations
+- TTS responses are typically larger than text responses (audio data).
+- Monitoring API call frequency and success rate is recommended.
+- Extended functionality does not affect the performance or stability of original features.
 
-### API要求
-- 确保API密钥有TTS权限
-- TTS功能需要 `gemini-2.5-flash-preview-tts` 模型
-- 注意API配额限制（免费版每天15次）
+### Deployment Suggestions
+- Test standard features in production before enabling.
+- Enable TTS functionality gradually and monitor logs.
+- Periodically check API quota usage.
 
-### 性能考虑
-- TTS响应通常比文本响应更大（音频数据）
-- 建议监控API调用频率和成功率
-- 扩展功能不影响原始功能的性能和稳定性
+## 📈 Monitoring and Debugging
 
-### 部署建议
-- 生产环境建议先测试普通功能
-- 逐步启用TTS功能并监控日志
-- 定期检查API配额使用情况
+### Log Inspection
+- **Server Logs**: View the TTS request processing flow.
+- **Admin Interface**: View request records in "API Call Details".
+- **Error Logs**: View detailed info for failed requests.
 
-## 📈 监控和调试
-
-### 日志查看
-- **服务器日志**：查看TTS请求处理过程
-- **管理界面**：在"API 调用详情"中查看请求记录
-- **错误日志**：查看失败请求的详细信息
-
-### 调试技巧
+### Debugging Tips
 ```bash
-# 启用详细日志
+# Enable detailed logging
 export LOG_LEVEL=DEBUG
 
-# 查看实时日志
+# View real-time logs
 tail -f logs/app.log
 
-# 多人TTS功能无需配置，自动启用
-# 可通过请求内容智能检测
+# Multi-speaker TTS feature requires no config, automatically enabled.
+# It can be intelligently detected via request content.
 ```
 
-## 🔄 TTS系统对比
+## 🔄 TTS System Comparison
 
-项目中现在有三套TTS系统，各自服务不同的用途：
+The project now includes three TTS systems, each serving different purposes:
 
-| TTS类型 | 路径 | 模型选择 | 语音配置 | 使用场景 | 我们的影响 |
+| TTS Type | Path | Model Selection | Voice Configuration | Use Case | Our Impact |
 |---------|------|----------|----------|----------|------------|
-| **OpenAI兼容TTS** | `/v1/audio/speech` | 固定配置文件 | 单人语音 | OpenAI API兼容 | ✅ 无影响 |
-| **Gemini单人TTS** | `/v1beta/models/{model}:generateContent` | 用户指定 | 单人语音 | 原生Gemini TTS | ✅ 我们的增强 |
-| **Gemini多人TTS** | `/v1beta/models/{model}:generateContent` | 用户指定 | 多人语音 | 对话场景 | ✅ 我们的增强 |
+| **OpenAI-Compatible TTS** | `/v1/audio/speech` | Fixed config file | Single speaker | OpenAI API compatibility | ✅ No impact |
+| **Gemini Single-Speaker TTS** | `/v1beta/models/{model}:generateContent` | User-specified | Single speaker | Native Gemini TTS | ✅ Our enhancement |
+| **Gemini Multi-Speaker TTS** | `/v1beta/models/{model}:generateContent` | User-specified | Multi-speaker | Dialogue scenarios | ✅ Our enhancement |
 
-### 智能路由机制
+### Intelligent Routing Mechanism
 
 ```mermaid
 flowchart TD
-    A[API请求] --> B{路径检查}
-    B -->|/v1/audio/speech| C[OpenAI兼容TTS服务]
-    B -->|/v1beta/models/{model}:generateContent| D{模型名包含'tts'?}
-    D -->|否| E[标准Gemini聊天服务]
-    D -->|是| F{包含responseModalities和speechConfig?}
-    F -->|否| G[标准Gemini聊天服务]
-    F -->|是| H[原生TTS增强服务]
-    H --> I{处理成功?}
-    I -->|是| J[返回原生TTS响应]
-    I -->|否| K[自动回退到标准服务]
-    C --> L[完成]
+    A[API Request] --> B{Path Check}
+    B -->|/v1/audio/speech| C[OpenAI-Compatible TTS Service]
+    B -->|/v1beta/models/{model}:generateContent| D{Model contains 'tts'?}
+    D -->|No| E[Standard Gemini Chat Service]
+    D -->|Yes| F{Contains responseModalities and speechConfig?}
+    F -->|No| G[Standard Gemini Chat Service]
+    F -->|Yes| H[Native TTS Enhanced Service]
+    H --> I{Success?}
+    I -->|Yes| J[Return Native TTS Response]
+    I -->|No| K[Fallback to Standard Service]
+    C --> L[Complete]
     E --> L
-    G --> L
-    J --> L
-    K --> L
 ```
 
-## 🎉 成功案例
+## 🎉 Success Story
 
-基于智能检测的原生Gemini TTS解决方案已经成功实现：
+The intelligent detection-based native Gemini TTS solution has been successfully implemented:
 
-- ✅ **零配置启用**：无需任何环境变量或配置修改
-- ✅ **智能检测**：自动检测所有原生Gemini TTS格式的请求
-- ✅ **完全向后兼容**：所有原有TTS功能零影响
-- ✅ **动态模型选择**：支持用户指定不同TTS模型
-- ✅ **自动回退机制**：处理失败时自动使用标准服务
-- ✅ **单人和多人语音合成**：支持所有原生Gemini TTS场景
-- ✅ **完整日志记录**：可在管理界面查看所有请求
-- ✅ **错误处理完善**：API配额和重试机制
-- ✅ **易于维护**：更新原始代码无冲突
+- ✅ **Zero-Config Activation**: No environment variables or config changes needed.
+- ✅ **Intelligent Detection**: Automatically detects all native Gemini TTS format requests.
+- ✅ **Full Backward Compatibility**: Zero impact on all existing TTS features.
+- ✅ **Dynamic Model Selection**: Allows user specification of different TTS models.
+- ✅ **Automatic Fallback Mechanism**: Uses standard service automatically if processing fails.
+- ✅ **Single and Multi-Speaker Synthesis**: Supports all native Gemini TTS scenarios.
+- ✅ **Comprehensive Logging**: All requests viewable in the admin interface.
+- ✅ **Robust Error Handling**: API quota and retry mechanisms.
+- ✅ **Ease of Maintenance**: Conflict-free updates to original source code.
 
-这个实现展示了如何在不修改原始代码的情况下，优雅地扩展复杂系统的功能，同时保持完美的向后兼容性。
+This implementation demonstrates how to gracefully extend the functionality of a complex system while maintaining perfect backward compatibility and without modifying original source code.

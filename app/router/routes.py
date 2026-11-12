@@ -1,5 +1,5 @@
 """
-路由配置模块，负责设置和配置应用程序的路由
+Route configuration module, responsible for setting up and configuring the application's routes
 """
 
 from fastapi import FastAPI, Request
@@ -29,16 +29,16 @@ from app.utils.static_version import get_static_url
 logger = get_routes_logger()
 
 templates = Jinja2Templates(directory="app/templates")
-# 设置模板全局变量
+# Set template global variables
 templates.env.globals["static_url"] = get_static_url
 
 
 def setup_routers(app: FastAPI) -> None:
     """
-    设置应用程序的路由
+    Setup application routes
 
     Args:
-        app: FastAPI应用程序实例
+        app: FastAPI application instance
     """
     app.include_router(openai_routes.router)
     app.include_router(gemini_routes.router)
@@ -61,20 +61,20 @@ def setup_routers(app: FastAPI) -> None:
 
 def setup_page_routes(app: FastAPI) -> None:
     """
-    设置页面相关的路由
+    Setup page-related routes
 
     Args:
-        app: FastAPI应用程序实例
+        app: FastAPI application instance
     """
 
     @app.get("/", response_class=HTMLResponse)
     async def auth_page(request: Request):
-        """认证页面"""
+        """Authentication page"""
         return templates.TemplateResponse("auth.html", {"request": request})
 
     @app.post("/auth")
     async def authenticate(request: Request):
-        """处理认证请求"""
+        """Handle authentication request"""
         try:
             form = await request.form()
             auth_token = form.get("auth_token")
@@ -100,7 +100,7 @@ def setup_page_routes(app: FastAPI) -> None:
 
     @app.get("/keys", response_class=HTMLResponse)
     async def keys_page(request: Request):
-        """密钥管理页面"""
+        """Key management page"""
         try:
             auth_token = request.cookies.get("auth_token")
             if not auth_token or not verify_auth_token(auth_token):
@@ -156,7 +156,7 @@ def setup_page_routes(app: FastAPI) -> None:
 
     @app.get("/config", response_class=HTMLResponse)
     async def config_page(request: Request):
-        """配置编辑页面"""
+        """Configuration editing page"""
         try:
             auth_token = request.cookies.get("auth_token")
             if not auth_token or not verify_auth_token(auth_token):
@@ -173,7 +173,7 @@ def setup_page_routes(app: FastAPI) -> None:
 
     @app.get("/logs", response_class=HTMLResponse)
     async def logs_page(request: Request):
-        """错误日志页面"""
+        """Error log page"""
         try:
             auth_token = request.cookies.get("auth_token")
             if not auth_token or not verify_auth_token(auth_token):
@@ -189,30 +189,30 @@ def setup_page_routes(app: FastAPI) -> None:
 
 def setup_health_routes(app: FastAPI) -> None:
     """
-    设置健康检查相关的路由
+    Setup health check related routes
 
     Args:
-        app: FastAPI应用程序实例
+        app: FastAPI application instance
     """
 
     @app.get("/health")
     async def health_check(request: Request):
-        """健康检查端点"""
+        """Health check endpoint"""
         logger.info("Health check endpoint called")
         return {"status": "healthy"}
 
 
 def setup_api_stats_routes(app: FastAPI) -> None:
     """
-    设置 API 统计相关的路由
+    Setup API statistics related routes
 
     Args:
-        app: FastAPI应用程序实例
+        app: FastAPI application instance
     """
 
     @app.get("/api/stats/details")
     async def api_stats_details(request: Request, period: str):
-        """获取指定时间段内的 API 调用详情"""
+        """Get API call details for a specified period"""
         try:
             auth_token = request.cookies.get("auth_token")
             if not auth_token or not verify_auth_token(auth_token):
@@ -238,14 +238,14 @@ def setup_api_stats_routes(app: FastAPI) -> None:
     async def api_stats_attention_keys(
         request: Request, limit: int = 20, status_code: int = 429
     ):
-        """返回最近24小时指定错误码次数最多的Key（仅包含内存Key列表中的）。默认错误码429。"""
+        """Returns the Keys with the most occurrences of the specified error code in the last 24 hours (only including those in the memory Key list). Default error code is 429."""
         try:
             auth_token = request.cookies.get("auth_token")
             if not auth_token or not verify_auth_token(auth_token):
                 logger.warning("Unauthorized access attempt to attention-keys")
                 return {"error": "Unauthorized"}, 401
 
-            # 支持所有标准HTTP状态码范围
+            # Support all standard HTTP status code ranges
             # if not isinstance(status_code, int) or status_code < 100 or status_code > 599:
             #     return {"error": f"Unsupported status_code: {status_code}"}, 400
 
@@ -265,7 +265,7 @@ def setup_api_stats_routes(app: FastAPI) -> None:
 
     @app.get("/api/stats/key-details")
     async def api_stats_key_details(request: Request, key: str, period: str):
-        """获取指定密钥在指定时间段内的调用详情"""
+        """Get call details for a specified key within a specified period"""
         try:
             auth_token = request.cookies.get("auth_token")
             if not auth_token or not verify_auth_token(auth_token):
