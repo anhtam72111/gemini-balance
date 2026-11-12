@@ -3,7 +3,7 @@ FROM python:3.10-slim
 WORKDIR /app
 
 # 复制所需文件到容器中
-COPY ./requirements.txt /app
+COPY ./requirements.txt ./requirements-locked.txt /app/
 COPY ./VERSION /app
 
 # REQ-270/TH-661 bước 3b (PO #44713): ĐÓNG BĂNG THƯ VIỆN theo image gốc 23-09
